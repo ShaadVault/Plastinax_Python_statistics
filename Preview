@@ -1,0 +1,126 @@
+!pip install numpy-financial 
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+from numpy_financial import irr # Import the irr function
+
+# Sample financial data
+data = {
+    'Year': [2020, 2021, 2022, 2023, 2024],
+    'Revenue': [100000, 1500, 200012, 250000, 300000],
+    'COGS': [40000, 60000, 80000, 100000, 120000],
+    'Operating Expenses': [20000, 2550, 30000, 35000, 40000],
+    'CapEx': [15000, 990, 25000, 30000, 35000],
+    'Net Cash Flow': [25000, 35000, 45000, 55000, 65000]
+}
+
+# Create DataFrame
+df = pd.DataFrame(data)
+
+# Calculate financial metrics
+df['Gross Profit'] = df['Revenue'] - df['COGS']
+df['Gross Margin (%)'] = (df['Gross Profit'] / df['Revenue']) * 100
+df['Operating Income'] = df['Gross Profit'] - df['Operating Expenses']
+df['Free Cash Flow'] = df['Net Cash Flow'] - df['CapEx']
+
+# Moving Averages
+df['Revenue MA'] = df['Revenue'].rolling(window=2).mean()
+df['Gross Profit MA'] = df['Gross Profit'].rolling(window=2).mean()
+
+# Standard Deviation (Volatility)
+df['Revenue StdDev'] = df['Revenue'].rolling(window=2).std()
+df['Gross Profit StdDev'] = df['Gross Profit'].rolling(window=2).std()
+
+# Correlation Matrix
+correlation_matrix = df.corr()
+
+# Linear Regression for Revenue Prediction
+X = np.array(df['Year']).reshape(-1, 1)
+y = df['Revenue']
+
+model = LinearRegression()
+model.fit(X, y)
+
+# Predict future revenue for the next 3 years
+future_years = np.array([2025, 2026, 2027]).reshape(-1, 1)
+predicted_revenue = model.predict(future_years)
+
+# Display the data
+print("Financial Data with Advanced Calculations:")
+print(df)
+print("\nCorrelation Matrix:")
+print(correlation_matrix)
+
+print("\nPredicted Revenue for 2025, 2026, 2027:")
+print(predicted_revenue)
+
+# Plotting the data with moving averages
+plt.figure(figsize=(12, 8))
+
+plt.subplot(2, 1, 1)
+plt.plot(df['Year'], df['Revenue'], label='Revenue')
+plt.plot(df['Year'], df['Revenue MA'], label='Revenue MA', linestyle='--')
+plt.title('Revenue and Moving Average')
+plt.xlabel('Year')
+plt.ylabel('Amount in USD')
+plt.legend()
+plt.grid(True)
+
+plt.subplot(2, 1, 2)
+plt.plot(df['Year'], df['Gross Profit'], label='Gross Profit')
+plt.plot(df['Year'], df['Gross Profit MA'], label='Gross Profit MA', linestyle='--')
+plt.title('Gross Profit and Moving Average')
+plt.xlabel('Year')
+plt.ylabel('Amount in USD')
+plt.legend()
+plt.grid(True)
+
+plt.tight_layout()
+plt.show()
+
+# Calculate EBITDA
+df['EBITDA'] = df['Operating Income'] + df['CapEx']
+
+# Define the discount rate
+discount_rate = 0.1  # 10% discount rate
+
+# Calculate NPV of Free Cash Flow
+df['Discount Factor'] = 1 / (1 + discount_rate) ** (df['Year'] - df['Year'].min())
+df['Discounted Cash Flow'] = df['Free Cash Flow'] * df['Discount Factor']
+NPV = df['Discounted Cash Flow'].sum()
+print("")
+
+import seaborn as sns
+
+# Correlation Matrix Heatmap
+plt.figure(figsize=(12, 8))
+corr_matrix = df.corr()
+
+sns.heatmap(corr_matrix, annot=True, fmt=".2f", cmap='coolwarm', cbar=True, square=True)
+plt.title('Correlation Matrix Heatmap')
+plt.show()
+
+# Pairplot (Scatter Matrix) for selected financial metrics
+sns.pairplot(df[['Revenue', 'Gross Profit', 'Operating Income', 'Free Cash Flow', 'EBITDA']])
+plt.suptitle('Pairplot (Scatter Matrix) of Financial Metrics', y=1.02)
+plt.show()
+
+# Boxplots for spread and outliers visualization
+plt.figure(figsize=(14, 10))
+
+plt.subplot(3, 1, 1)
+sns.boxplot(x=df['Revenue'])
+plt.title('Boxplot of Revenue')
+
+plt.subplot(3, 1, 2)
+sns.boxplot(x=df['Gross Profit'])
+plt.title('Boxplot of Gross Profit')
+
+plt.subplot(3, 1, 3)
+sns.boxplot(x=df['Free Cash Flow'])
+plt.title('Boxplot of Free Cash Flow')
+
+plt.tight_layout()
+plt.show()
