@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
 from numpy_financial import irr # Import the irr function
 
-# Sample financial data
 data = {
     'Year': [2020, 2021, 2022, 2023, 2024],
     'Revenue': [100000, 1500, 200012, 250000, 300000],
@@ -25,7 +24,7 @@ df['Gross Margin (%)'] = (df['Gross Profit'] / df['Revenue']) * 100
 df['Operating Income'] = df['Gross Profit'] - df['Operating Expenses']
 df['Free Cash Flow'] = df['Net Cash Flow'] - df['CapEx']
 
-# Moving Averages
+
 df['Revenue MA'] = df['Revenue'].rolling(window=2).mean()
 df['Gross Profit MA'] = df['Gross Profit'].rolling(window=2).mean()
 
@@ -33,7 +32,7 @@ df['Gross Profit MA'] = df['Gross Profit'].rolling(window=2).mean()
 df['Revenue StdDev'] = df['Revenue'].rolling(window=2).std()
 df['Gross Profit StdDev'] = df['Gross Profit'].rolling(window=2).std()
 
-# Correlation Matrix
+
 correlation_matrix = df.corr()
 
 # Linear Regression for Revenue Prediction
@@ -47,7 +46,7 @@ model.fit(X, y)
 future_years = np.array([2025, 2026, 2027]).reshape(-1, 1)
 predicted_revenue = model.predict(future_years)
 
-# Display the data
+
 print("Financial Data with Advanced Calculations:")
 print(df)
 print("\nCorrelation Matrix:")
@@ -80,13 +79,13 @@ plt.grid(True)
 plt.tight_layout()
 plt.show()
 
-# Calculate EBITDA
+
 df['EBITDA'] = df['Operating Income'] + df['CapEx']
 
-# Define the discount rate
+
 discount_rate = 0.1  # 10% discount rate
 
-# Calculate NPV of Free Cash Flow
+
 df['Discount Factor'] = 1 / (1 + discount_rate) ** (df['Year'] - df['Year'].min())
 df['Discounted Cash Flow'] = df['Free Cash Flow'] * df['Discount Factor']
 NPV = df['Discounted Cash Flow'].sum()
