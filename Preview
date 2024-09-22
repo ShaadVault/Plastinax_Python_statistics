@@ -15,10 +15,10 @@ data = {
     'Net Cash Flow': [25000, 35000, 45000, 55000, 65000]
 }
 
-# Create DataFrame
+
 df = pd.DataFrame(data)
 
-# Calculate financial metrics
+
 df['Gross Profit'] = df['Revenue'] - df['COGS']
 df['Gross Margin (%)'] = (df['Gross Profit'] / df['Revenue']) * 100
 df['Operating Income'] = df['Gross Profit'] - df['Operating Expenses']
@@ -28,7 +28,7 @@ df['Free Cash Flow'] = df['Net Cash Flow'] - df['CapEx']
 df['Revenue MA'] = df['Revenue'].rolling(window=2).mean()
 df['Gross Profit MA'] = df['Gross Profit'].rolling(window=2).mean()
 
-# Standard Deviation (Volatility)
+
 df['Revenue StdDev'] = df['Revenue'].rolling(window=2).std()
 df['Gross Profit StdDev'] = df['Gross Profit'].rolling(window=2).std()
 
@@ -42,7 +42,7 @@ y = df['Revenue']
 model = LinearRegression()
 model.fit(X, y)
 
-# Predict future revenue for the next 3 years
+
 future_years = np.array([2025, 2026, 2027]).reshape(-1, 1)
 predicted_revenue = model.predict(future_years)
 
@@ -55,7 +55,7 @@ print(correlation_matrix)
 print("\nPredicted Revenue for 2025, 2026, 2027:")
 print(predicted_revenue)
 
-# Plotting the data with moving averages
+
 plt.figure(figsize=(12, 8))
 
 plt.subplot(2, 1, 1)
@@ -93,7 +93,7 @@ print("")
 
 import seaborn as sns
 
-# Correlation Matrix Heatmap
+
 plt.figure(figsize=(12, 8))
 corr_matrix = df.corr()
 
